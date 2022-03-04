@@ -58,9 +58,17 @@
     <link name="${camera_name}_rgb_camera_optical_frame"/>
     
     <joint name="${camera_name}_rgb_camera_optical_joint" type="fixed">
-        <origin xyz="0 0 0" rpy="-${M_PI/2} 0.0 -${M_PI/2}"/>
+        <origin xyz="0 0 0" rpy="0.0 0.0 0.0"/>
         <parent link="${camera_name}_rgb_camera_frame"/>
         <child link="${camera_name}_rgb_camera_optical_frame"/>
+    </joint>
+
+    <link name="${camera_name}_depth_camera_frame"/>
+    
+    <joint name="${camera_name}_depth_camera_joint" type="fixed">
+        <origin xyz="0 0 0" rpy="-${M_PI/2} 0.0 -${M_PI/2}"/>
+        <parent link="${camera_name}_rgb_camera_frame"/>
+        <child link="${camera_name}_depth_camera_frame"/>
     </joint>
 
 <!-- Left Camera -->
@@ -75,7 +83,7 @@
     <link name="${camera_name}_left_camera_optical_frame"/>
     
     <joint name="${camera_name}_left_camera_optical_joint" type="fixed">
-        <origin xyz="0 0 0" rpy="-${M_PI/2} 0.0 -${M_PI/2}"/>
+        <origin xyz="0 0 0" rpy="0.0 0.0 0.0"/>
         <parent link="${camera_name}_left_camera_frame"/>
         <child link="${camera_name}_left_camera_optical_frame"/>
     </joint>
@@ -93,11 +101,39 @@
     <link name="${camera_name}_right_camera_optical_frame"/>
     
     <joint name="${camera_name}_right_camera_optical_joint" type="fixed">
-        <origin xyz="0 0 0" rpy="-${M_PI/2} 0.0 -${M_PI/2}"/>
+        <origin xyz="0 0 0" rpy="0.0 0.0 0.0"/>
         <parent link="${camera_name}_right_camera_frame"/>
         <child link="${camera_name}_right_camera_optical_frame"/>
     </joint>
 
+    <gazebo reference="${camera_name}_rgb_camera_optical_frame">
+      <sensor name="${camera_name}" type="depth">
+        <update_rate>30</update_rate>
+        <camera>
+          <horizontal_fov>1.41</horizontal_fov>
+          <image>
+            <width>1280</width>
+            <height>800</height>
+            <format>R8G8B8</format>
+          </image>
+          <clip>
+            <near>0.2</near>
+            <far>5</far>
+          </clip>
+          <noise>
+            <type>gaussian</type>
+            <mean>0.0</mean>
+            <stddev>0.007</stddev>
+          </noise>
+        </camera>
+        <plugin name="stereo_camera_controller" filename="libgazebo_ros_camera.so">
+          <camera_name>${camera_name}</camera_name>
+          <min_depth>0.2</min_depth>
+          <max_depth>5</max_depth>
+          <frame_name>${camera_name}_depth_camera_frame</frame_name>
+        </plugin>
+      </sensor>
+    </gazebo>
 </xacro:macro>
 
 </robot>
